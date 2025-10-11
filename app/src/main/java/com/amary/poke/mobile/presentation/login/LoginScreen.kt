@@ -29,10 +29,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amary.poke.mobile.presentation.component.ProgressDialog
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 @Composable
 fun LoginScreen(
-    state: LoginState,
+    events: Flow<LoginEvent>,
     onLogin: (userName: String, password: String) -> Unit,
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit = {}
@@ -41,20 +43,25 @@ fun LoginScreen(
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
-    LaunchedEffect(state) {
-        when (state) {
-            is LoginState.Success -> {
-                onLoginSuccess()
+    LaunchedEffect(Unit) {
+        events.collect { event ->
+            when (event) {
+                is LoginEvent.Loading -> isLoading = true
+                is LoginEvent.LoadingComplete -> isLoading = false
+                is LoginEvent.Success -> {
+                    onLoginSuccess()
+                }
+
+                is LoginEvent.Error -> {
+                    Toast.makeText(
+                        context,
+                        event.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-            is LoginState.Error -> {
-                Toast.makeText(
-                    context,
-                    state.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            else -> {}
         }
     }
 
@@ -102,7 +109,7 @@ fun LoginScreen(
                 Button(
                     onClick = { onLogin(username, password) },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = state !is LoginState.Loading
+                    enabled = !isLoading
                 ) {
                     Text("Login")
                 }
@@ -118,7 +125,7 @@ fun LoginScreen(
             }
 
             ProgressDialog(
-                isShowing = state is LoginState.Loading,
+                isShowing = isLoading,
                 message = "Logging in..."
             )
         }
@@ -129,7 +136,7 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     LoginScreen(
-        state = LoginState.Success,
+        events = flow { emit(LoginEvent.Loading) },
         onLogin = { _, _ -> },
         onLoginSuccess = {}
     )
