@@ -1,7 +1,5 @@
 package com.amary.poke.mobile.presentation.register
 
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -17,17 +15,16 @@ data object RegisterRoute
 fun NavGraphBuilder.registerScreen(navController: NavHostController) {
     composable<RegisterRoute> {
         val viewModel: RegisterViewModel = koinViewModel()
-        val state by viewModel.state.collectAsStateWithLifecycle()
 
         RegisterScreen(
-            state = state,
-            onRegister = { username, fullName, email, password -> },
+            events = viewModel.events,
+            onRegister = viewModel::register,
             onRegisterSuccess = {
                 navController.popBackStack()
                 navController.navigate(LoginRoute)
             },
             onNavigateBack = {
-
+                navController.popBackStack()
             }
         )
     }

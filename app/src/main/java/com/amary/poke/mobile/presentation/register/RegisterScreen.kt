@@ -33,10 +33,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amary.poke.mobile.presentation.component.ProgressDialog
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 @Composable
 fun RegisterScreen(
-    state: RegisterState,
+    events: Flow<RegisterEvent>,
     onRegister: (
         username: String,
         fullName: String,
@@ -52,25 +54,33 @@ fun RegisterScreen(
     var fullName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
-    LaunchedEffect(state) {
-        when (state) {
-            is RegisterState.Success -> {
-                Toast.makeText(
-                    context,
-                    "Registration successful!",
-                    Toast.LENGTH_SHORT
-                ).show()
-                onRegisterSuccess()
+    LaunchedEffect(Unit) {
+        events.collect { event ->
+            when (event) {
+                is RegisterEvent.Loading -> {
+                    isLoading = true
+                }
+                is RegisterEvent.LoadingComplete -> {
+                    isLoading = false
+                }
+                is RegisterEvent.Success -> {
+                    Toast.makeText(
+                        context,
+                        "Registration successful!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    onRegisterSuccess()
+                }
+                is RegisterEvent.Error -> {
+                    Toast.makeText(
+                        context,
+                        event.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-            is RegisterState.Error -> {
-                Toast.makeText(
-                    context,
-                    state.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            else -> {}
         }
     }
 
@@ -152,14 +162,14 @@ fun RegisterScreen(
                 Button(
                     onClick = { onRegister(username, fullName, email, password) },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = state !is RegisterState.Loading
+                    enabled = !isLoading
                 ) {
                     Text("Register")
                 }
             }
 
             ProgressDialog(
-                isShowing = state is RegisterState.Loading,
+                isShowing = isLoading,
                 message = "Registering..."
             )
         }
@@ -170,7 +180,7 @@ fun RegisterScreen(
 @Composable
 fun RegisterScreenPreview() {
     RegisterScreen(
-        state = RegisterState.Success,
+        events = flow { emit(RegisterEvent.Loading) },
         onRegister = { _, _, _, _ -> },
         onRegisterSuccess = {},
         onNavigateBack = {}
