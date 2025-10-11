@@ -1,6 +1,10 @@
 package com.amary.poke.mobile
 
 import android.app.Application
+import com.amary.poke.mobile.di.domainModule
+import com.amary.poke.mobile.di.localModule
+import com.amary.poke.mobile.di.repositoryModule
+import com.amary.poke.mobile.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -13,7 +17,12 @@ class MainApplication: Application() {
         startKoin {
             androidLogger(Level.DEBUG)
             androidContext(this@MainApplication)
-            modules() //TODO: add modules here
+            modules(
+                localModule,
+                repositoryModule,
+                domainModule,
+                viewModelModule,
+            )
         }
     }
 }
