@@ -1,4 +1,4 @@
-package com.amary.poke.mobile.ui.theme
+package com.amary.poke.mobile.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
