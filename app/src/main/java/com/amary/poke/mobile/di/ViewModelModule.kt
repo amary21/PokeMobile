@@ -1,0 +1,11 @@
+package com.amary.poke.mobile.di
+
+import com.amary.poke.mobile.presentation.login.LoginViewModel
+import com.amary.poke.mobile.presentation.register.RegisterViewModel
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
+
+val viewModelModule = module {
+    viewModel { LoginViewModel(get(), get()) }
+    viewModel { RegisterViewModel(get()) }
+}
