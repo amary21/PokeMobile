@@ -24,7 +24,7 @@ interface PokeRepository {
 
     suspend fun login(username: String, password: String): UserModel?
 
-    suspend fun getUserById(userId: Int): UserModel?
+    suspend fun getUserById(userId: String): UserModel?
 
     suspend fun insertAuth(auth: AuthModel)
 
