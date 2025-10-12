@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.amary.poke.mobile.presentation.detail.detailScreen
 import com.amary.poke.mobile.presentation.home.homeScreen
 import com.amary.poke.mobile.presentation.login.LoginRoute
 import com.amary.poke.mobile.presentation.login.loginScreen
@@ -21,5 +22,6 @@ fun MainNavigation(modifier: Modifier = Modifier) {
         loginScreen(navController)
         registerScreen(navController)
         homeScreen(navController)
+        detailScreen(navController)
     }
 }

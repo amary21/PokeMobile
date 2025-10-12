@@ -1,5 +1,6 @@
 package com.amary.poke.mobile.di
 
+import com.amary.poke.mobile.presentation.detail.DetailViewModel
 import com.amary.poke.mobile.presentation.list.ListViewModel
 import com.amary.poke.mobile.presentation.login.LoginViewModel
 import com.amary.poke.mobile.presentation.profile.ProfileViewModel
@@ -12,4 +13,5 @@ val viewModelModule = module {
     viewModel { RegisterViewModel(get()) }
     viewModel { ListViewModel(get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
+    viewModel { DetailViewModel(get()) }
 }

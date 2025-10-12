@@ -16,7 +16,7 @@ class ProfileViewModel(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ProfileState>(ProfileState.Initial)
-    val state = _state.asStateFlow()
+    val state get() = _state.asStateFlow()
 
     private val _events = Channel<ProfileEvent>(Channel.BUFFERED)
     val events get() = _events.receiveAsFlow()

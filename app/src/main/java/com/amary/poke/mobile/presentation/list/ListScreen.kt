@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,7 +28,6 @@ fun ListScreen(
     searchState: SearchState,
     onGetListItem: (offset: Int) -> Unit = {},
     onGetSearch: (name: String) -> Unit = {},
-    onItemClick: (ResultModel) -> Unit = {},
     onNavigateToDetail: (name: String) -> Unit = {},
 ) {
 
@@ -64,7 +62,7 @@ fun ListScreen(
                         items = listState.list,
                         offset = listState.offset,
                         onGetListItem = onGetListItem,
-                        onItemClick = onItemClick
+                        onNavigateToDetail = onNavigateToDetail
                     )
                 }
 
@@ -89,7 +87,7 @@ fun PokemonList(
     items: List<ResultModel>,
     offset: Int,
     onGetListItem: (Int) -> Unit,
-    onItemClick: (ResultModel) -> Unit,
+    onNavigateToDetail: (name: String) -> Unit,
 ) {
     val lastIndex = items.lastIndex
     LazyColumn {
@@ -101,17 +99,11 @@ fun PokemonList(
             )
         }
         itemsIndexed(items) { index, item ->
-            PokemonItem(item = item, onItemClick = onItemClick)
+            PokemonItem(item = item, onNavigateToDetail = onNavigateToDetail)
 
             if (index == lastIndex && offset > 10) {
                 onGetListItem(offset)
             }
-        }
-        items(items) { item ->
-            PokemonItem(
-                item = item,
-                onItemClick = onItemClick
-            )
         }
     }
 }
@@ -119,13 +111,13 @@ fun PokemonList(
 @Composable
 fun PokemonItem(
     item: ResultModel,
-    onItemClick: (ResultModel) -> Unit
+    onNavigateToDetail: (name: String) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onItemClick(item) },
+            .clickable { onNavigateToDetail(item.name) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Text(
