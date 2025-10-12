@@ -66,6 +66,10 @@ class PokeRepositoryImpl(
         localSource.login(username, password)?.toDomain()
     }
 
+    override suspend fun getUserById(userId: Int): UserModel? = withContext(ioDispatcher) {
+        localSource.getUserById(userId)?.toDomain()
+    }
+
     override suspend fun insertAuth(auth: AuthModel) = withContext(ioDispatcher) {
         localSource.insertAuth(AuthDto.fromDomain(auth))
     }
@@ -76,5 +80,9 @@ class PokeRepositoryImpl(
 
     override suspend fun isAuthenticated(): Boolean = withContext(ioDispatcher) {
         localSource.isAuthenticated()
+    }
+
+    override suspend fun getAuth(): AuthModel? = withContext(ioDispatcher) {
+        localSource.getAuth()?.toDomain()
     }
 }

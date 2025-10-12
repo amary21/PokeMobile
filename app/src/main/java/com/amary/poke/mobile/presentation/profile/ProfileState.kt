@@ -7,5 +7,4 @@ sealed class ProfileState {
     object Loading : ProfileState()
     data class Success(val user: UserModel) : ProfileState()
     data class Error(val message: String) : ProfileState()
-    object LoggedOut : ProfileState()
 }

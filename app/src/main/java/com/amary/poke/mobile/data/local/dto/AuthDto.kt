@@ -5,6 +5,9 @@ import com.amary.poke.mobile.domain.model.AuthModel
 data class AuthDto (
     val id: Int = 0,
 ) {
+    fun toDomain() = AuthModel(
+        id = id
+    )
 
     fun toMap() = mapOf(
         "id" to id

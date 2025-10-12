@@ -1,5 +1,6 @@
 package com.amary.poke.mobile.presentation.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,9 @@ fun HomeScreen(
     onTabSelected: (Int) -> Unit,
     contentNavigation: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
+
+    BackHandler(enabled = true) {}
+
     Scaffold(
         bottomBar = {
             Column(
