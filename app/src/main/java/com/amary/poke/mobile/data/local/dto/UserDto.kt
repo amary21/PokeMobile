@@ -3,7 +3,7 @@ package com.amary.poke.mobile.data.local.dto
 import com.amary.poke.mobile.domain.model.UserModel
 
 data class UserDto(
-    val id: Int = 0,
+    val id: String = "",
     val userName: String = "",
     val fullName: String = "",
     val email: String = "",
@@ -26,12 +26,14 @@ data class UserDto(
     )
 
     companion object {
-        fun fromMap(map: Map<String?, Any?>?) = UserDto(
-            id = (map?.get("id") as? Number)?.toInt() ?: 0,
-            userName = map?.get("user_name") as? String ?: "",
-            fullName = map?.get("full_name") as? String ?: "",
-            email = map?.get("email") as? String ?: "",
-            password = map?.get("password") as? String ?: ""
+        fun fromMap(map: Map<String?, Any?>?) = if (map == null) {
+            null
+        } else UserDto(
+            id = map["id"] as? String ?: "",
+            userName = map["user_name"] as? String ?: "",
+            fullName = map["full_name"] as? String ?: "",
+            email = map["email"] as? String ?: "",
+            password = map["password"] as? String ?: ""
         )
 
         fun fromDomain(domain: UserModel) = UserDto(

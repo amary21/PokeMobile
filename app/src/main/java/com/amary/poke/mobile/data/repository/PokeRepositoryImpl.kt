@@ -66,7 +66,7 @@ class PokeRepositoryImpl(
         localSource.login(username, password)?.toDomain()
     }
 
-    override suspend fun getUserById(userId: Int): UserModel? = withContext(ioDispatcher) {
+    override suspend fun getUserById(userId: String): UserModel? = withContext(ioDispatcher) {
         localSource.getUserById(userId)?.toDomain()
     }
 

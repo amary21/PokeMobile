@@ -3,7 +3,7 @@ package com.amary.poke.mobile.data.local.dto
 import com.amary.poke.mobile.domain.model.AuthModel
 
 data class AuthDto (
-    val id: Int = 0,
+    val id: String = "",
 ) {
     fun toDomain() = AuthModel(
         id = id
@@ -14,8 +14,10 @@ data class AuthDto (
     )
 
     companion object {
-        fun fromMap(map: Map<String?, Any?>?) = AuthDto(
-            id = (map?.get("id") as? Number)?.toInt() ?: 0
+        fun fromMap(map: Map<String?, Any?>?) = if (map == null) {
+            null
+        } else AuthDto(
+            id = map["id"] as? String ?: ""
         )
 
         fun fromDomain(domain: AuthModel) = AuthDto(

@@ -18,6 +18,7 @@ import com.couchbase.lite.UnitOfWork
 import com.couchbase.lite.ValueIndexItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class LocalSourceImpl(
     private val authCollection: Collection,
@@ -167,8 +168,10 @@ class LocalSourceImpl(
 
     override suspend fun insertUser(user: UserDto) = withContext(ioDispatcher) {
         try {
-            val document = MutableDocument(user.id.toString()).apply {
-                setData(user.toMap())
+            val userId = UUID.randomUUID().toString()
+            val newUser = user.copy(id = userId)
+            val document = MutableDocument(userId).apply {
+                setData(newUser.toMap())
             }
             userCollection.save(document)
         } catch (e: Exception) {
@@ -177,12 +180,12 @@ class LocalSourceImpl(
         }
     }
 
-    override suspend fun getUserById(userId: Int): UserDto? = withContext(ioDispatcher) {
+    override suspend fun getUserById(userId: String): UserDto? = withContext(ioDispatcher) {
         try {
             val query = QueryBuilder
                 .select(SelectResult.all())
                 .from(DataSource.collection(userCollection))
-                .where(Expression.property("id").equalTo(Expression.intValue(userId)))
+                .where(Expression.property("id").equalTo(Expression.string(userId)))
                 .limit(Expression.intValue(1))
 
             val resultSet = query.execute()
@@ -227,7 +230,7 @@ class LocalSourceImpl(
 
     override suspend fun insertAuth(auth: AuthDto) = withContext(ioDispatcher) {
         try {
-            val document = MutableDocument(auth.id.toString()).apply {
+            val document = MutableDocument(auth.id).apply {
                 setData(auth.toMap())
             }
             authCollection.save(document)

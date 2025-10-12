@@ -10,7 +10,7 @@ interface LocalSource {
     suspend fun insert(results: List<ResultDto>)
     suspend fun isUsernameExists(username: String): Boolean
     suspend fun insertUser(user: UserDto)
-    suspend fun getUserById(userId: Int): UserDto?
+    suspend fun getUserById(userId: String): UserDto?
     suspend fun login(username: String, password: String): UserDto?
     suspend fun insertAuth(auth: AuthDto)
     suspend fun logout()
