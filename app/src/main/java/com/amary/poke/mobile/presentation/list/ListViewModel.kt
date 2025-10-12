@@ -1,6 +1,5 @@
 package com.amary.poke.mobile.presentation.list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amary.poke.mobile.domain.usecase.DetailUseCase

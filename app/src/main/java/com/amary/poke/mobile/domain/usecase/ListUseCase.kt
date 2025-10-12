@@ -1,6 +1,5 @@
 package com.amary.poke.mobile.domain.usecase
 
-import android.util.Log
 import com.amary.poke.mobile.domain.model.PokeModel
 import com.amary.poke.mobile.domain.repository.PokeRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,14 +18,10 @@ class ListUseCase(
                 offset = offset
             )
 
-            Log.e("ListUseCase", remote.toString())
-
             if (offset == 10) { repository.deletePokemon() }
             repository.savePokemon(remote.result)
 
             val model = repository.listLocalPokemon().distinctBy { it.name }
-
-            Log.e( "Model", model.toString())
 
             emit(Result.success(PokeModel(result = model, next = remote.next)))
 
