@@ -8,25 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.amary.poke.mobile.domain.model.ResultModel
 import com.amary.poke.mobile.presentation.component.ProgressDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
     listState: ListState,
@@ -46,81 +33,17 @@ fun ListScreen(
     onNavigateToDetail: (name: String) -> Unit = {},
 ) {
 
-    var searchQuery by remember { mutableStateOf("") }
-    var isSearchActive by remember { mutableStateOf(false) }
-
     LaunchedEffect(key1 = Unit) {
         onGetListItem(10)
     }
 
     Scaffold(
         topBar = {
-            SearchBar(
-                inputField = {
-                    SearchBarDefaults.InputField(
-                        query = searchQuery,
-                        onQueryChange = { searchQuery = it },
-                        onSearch = onGetSearch,
-                        expanded = isSearchActive,
-                        onExpandedChange = { isSearchActive = it },
-                        placeholder = { Text("Search Pokémon") },
-                        trailingIcon = {
-                            if (searchQuery.isNotEmpty()) {
-                                IconButton(onClick = { searchQuery = "" }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Clear")
-                                }
-                            } else {
-                                Icon(Icons.Default.Search, contentDescription = null)
-                            }
-                        },
-                        colors = SearchBarDefaults.colors().inputFieldColors
-                    )
-                },
-                expanded = isSearchActive,
-                onExpandedChange = { isSearchActive = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = SearchBarDefaults.colors()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    when (searchState) {
-                        is SearchState.Loading -> {
-                            ProgressDialog(
-                                isShowing = true,
-                                message = "Loading..."
-                            )
-                        }
-                        is SearchState.Success -> {
-                            val data = searchState.data
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        onNavigateToDetail(data.name)
-                                    },
-                                text = data.name
-                            )
-                        }
-                        is SearchState.Error -> {
-                            Text(
-                                text = searchState.message,
-                                color = MaterialTheme.colorScheme.error,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                                    .align(Alignment.Center)
-                            )
-                        }
-                        is SearchState.Initial -> {}
-                    }
-                }
-            }
+            SearchComponent(
+                searchState = searchState,
+                onGetSearch = onGetSearch,
+                onNavigateToDetail = onNavigateToDetail
+            )
         }
     ) { paddingValues ->
         Box(
@@ -169,7 +92,6 @@ fun PokemonList(
     onItemClick: (ResultModel) -> Unit,
 ) {
     val lastIndex = items.lastIndex
-
     LazyColumn {
         item {
             Text(
