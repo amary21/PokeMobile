@@ -6,9 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.amary.poke.mobile.presentation.detail.detailScreen
 import com.amary.poke.mobile.presentation.home.homeScreen
-import com.amary.poke.mobile.presentation.login.LoginRoute
 import com.amary.poke.mobile.presentation.login.loginScreen
 import com.amary.poke.mobile.presentation.register.registerScreen
+import com.amary.poke.mobile.presentation.splash.SplashRoute
+import com.amary.poke.mobile.presentation.splash.splashScreen
 
 @Composable
 fun MainNavigation(modifier: Modifier = Modifier) {
@@ -16,9 +17,10 @@ fun MainNavigation(modifier: Modifier = Modifier) {
 
     NavHost(
         navController = navController,
-        startDestination = LoginRoute,
+        startDestination = SplashRoute,
         modifier = modifier
     ) {
+        splashScreen(navController)
         loginScreen(navController)
         registerScreen(navController)
         homeScreen(navController)
