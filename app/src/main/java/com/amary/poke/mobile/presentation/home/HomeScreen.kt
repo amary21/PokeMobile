@@ -36,17 +36,17 @@ fun HomeScreen(
     contentNavigation: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
-        topBar = {
+        bottomBar = {
             Column(
                 modifier = Modifier
-                    .padding(vertical = 24.dp)
+                    .padding(bottom = 16.dp)
             ) {
                 SecondaryTabRow(
                     selectedTabIndex = selectedTabIndex,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
-                        .clip(RoundedCornerShape(12.dp)),
+                        .clip(RoundedCornerShape(36.dp)),
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     indicator = {
@@ -72,7 +72,7 @@ fun HomeScreen(
                             onClick = { onTabSelected(index) },
                             modifier = Modifier
                                 .padding(8.dp)
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(RoundedCornerShape(36.dp))
                                 .background(
                                     if (selectedTabIndex == index)
                                         MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
@@ -82,7 +82,7 @@ fun HomeScreen(
                                 Icon(
                                     tabIcons[index],
                                     contentDescription = title,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(24.dp)
                                 )
                             },
                             text = {
