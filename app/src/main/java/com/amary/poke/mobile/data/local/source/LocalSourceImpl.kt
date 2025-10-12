@@ -150,100 +150,153 @@ class LocalSourceImpl(
     }
 
     override suspend fun isUsernameExists(username: String): Boolean = withContext(ioDispatcher) {
-        val query = QueryBuilder
-            .select(SelectResult.expression(Expression.property("user_name")))
-            .from(DataSource.collection(userCollection))
-            .where(Expression.property("user_name").equalTo(Expression.string(username)))
-            .limit(Expression.intValue(1))
+        try {
+            val query = QueryBuilder
+                .select(SelectResult.expression(Expression.property("user_name")))
+                .from(DataSource.collection(userCollection))
+                .where(Expression.property("user_name").equalTo(Expression.string(username)))
+                .limit(Expression.intValue(1))
 
-        val resultSet = query.execute()
-        resultSet.allResults().isNotEmpty()
+            val resultSet = query.execute()
+            return@withContext resultSet.allResults().isNotEmpty()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return@withContext false
+        }
     }
 
     override suspend fun insertUser(user: UserDto) = withContext(ioDispatcher) {
-        val document = MutableDocument(
-            user.id.toString(),
-            user.toMap()
-        )
-
-        userCollection.save(document)
+        try {
+            val document = MutableDocument(user.id.toString()).apply {
+                setData(user.toMap())
+            }
+            userCollection.save(document)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
     override suspend fun getUserById(userId: Int): UserDto? = withContext(ioDispatcher) {
-        val query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(userCollection))
-            .where(Expression.property("id").equalTo(Expression.intValue(userId)))
-            .limit(Expression.intValue(1))
+        try {
+            val query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(userCollection))
+                .where(Expression.property("id").equalTo(Expression.intValue(userId)))
+                .limit(Expression.intValue(1))
 
-        val resultSet = query.execute()
-        val result = resultSet.allResults().firstOrNull()
-        val userMap = result?.toMap()
-        UserDto.fromMap(userMap)
+            val resultSet = query.execute()
+            val result = resultSet.allResults().firstOrNull()
+
+            val dict = result?.getDictionary(userCollection.name)
+            val userMap = dict?.toMap()
+
+            return@withContext UserDto.fromMap(userMap)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return@withContext null
+        }
     }
 
     override suspend fun login(
         username: String,
         password: String
     ): UserDto? = withContext(ioDispatcher) {
-        val query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(userCollection))
-            .where(
-                Expression.property("user_name").equalTo(Expression.string(username))
-                    .and(Expression.property("password").equalTo(Expression.string(password)))
-            )
-            .limit(Expression.intValue(1))
+        try {
+            val query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(userCollection))
+                .where(
+                    Expression.property("user_name").equalTo(Expression.string(username))
+                        .and(Expression.property("password").equalTo(Expression.string(password)))
+                )
+                .limit(Expression.intValue(1))
 
-        val resultSet = query.execute()
-        val result = resultSet.allResults().firstOrNull()
-        val userMap = result?.toMap()
-        UserDto.fromMap(userMap)
+            val resultSet = query.execute()
+            val result = resultSet.allResults().firstOrNull()
+
+            val dict = result?.getDictionary(userCollection.name)
+            val userMap = dict?.toMap()
+
+            return@withContext UserDto.fromMap(userMap)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return@withContext null
+        }
     }
 
     override suspend fun insertAuth(auth: AuthDto) = withContext(ioDispatcher) {
-        val document = MutableDocument(
-            auth.id.toString(),
-            auth.toMap()
-        )
-
-        authCollection.save(document)
+        try {
+            val document = MutableDocument(auth.id.toString()).apply {
+                setData(auth.toMap())
+            }
+            authCollection.save(document)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override suspend fun logout() = withContext(ioDispatcher) {
-        val query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(authCollection))
+        try {
+            val query = QueryBuilder
+                .select(SelectResult.expression(Meta.id))
+                .from(DataSource.collection(authCollection))
 
-        val resultSet = query.execute()
-        val results = resultSet.allResults()
-        for (result in results) {
-            val authId = result.getString("id") ?: continue
-            val document = authCollection.getDocument(authId) ?: continue
-            authCollection.delete(document)
+            val resultSet = query.execute()
+
+            authCollection.database.inBatch(UnitOfWork {
+                resultSet.allResults().forEach { result ->
+                    val docId = result.getString(0)
+                    docId?.let {
+                        val document = authCollection.getDocument(it)
+                        document?.let { doc -> authCollection.delete(doc) }
+                    }
+                }
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
     override suspend fun isAuthenticated(): Boolean = withContext(ioDispatcher) {
-        val query = QueryBuilder
-            .select(SelectResult.expression(Expression.property("id")))
-            .from(DataSource.collection(authCollection))
-            .limit(Expression.intValue(1))
+        try {
+            val query = QueryBuilder
+                .select(SelectResult.expression(Meta.id))
+                .from(DataSource.collection(authCollection))
+                .limit(Expression.intValue(1))
 
-        val resultSet = query.execute()
-        resultSet.allResults().isNotEmpty()
+            val resultSet = query.execute()
+            val isAuth = resultSet.allResults().isNotEmpty()
+
+            return@withContext isAuth
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return@withContext false
+        }
     }
 
     override suspend fun getAuth(): AuthDto? = withContext(ioDispatcher) {
-        val query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(authCollection))
-            .limit(Expression.intValue(1))
+        try {
+            val query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(authCollection))
+                .limit(Expression.intValue(1))
 
-        val resultSet = query.execute()
-        val result = resultSet.allResults().firstOrNull()
-        val authMap = result?.toMap()
-        AuthDto.fromMap(authMap)
+            val resultSet = query.execute()
+            val result = resultSet.allResults().firstOrNull()
+
+            if (result == null) {
+                return@withContext null
+            }
+
+            val dict = result.getDictionary(authCollection.name)
+            val authMap = dict?.toMap()
+
+            return@withContext AuthDto.fromMap(authMap)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return@withContext null
+        }
     }
 
     private fun generateDocId(name: String): String {
