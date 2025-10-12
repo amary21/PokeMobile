@@ -26,12 +26,12 @@ data class UserDto(
     )
 
     companion object {
-        fun fromMap(map: Map<String, Any?>) = UserDto(
-            id = (map["id"] as? Number)?.toInt() ?: 0,
-            userName = map["user_name"] as? String ?: "",
-            fullName = map["full_name"] as? String ?: "",
-            email = map["email"] as? String ?: "",
-            password = map["password"] as? String ?: ""
+        fun fromMap(map: Map<String?, Any?>?) = UserDto(
+            id = (map?.get("id") as? Number)?.toInt() ?: 0,
+            userName = map?.get("user_name") as? String ?: "",
+            fullName = map?.get("full_name") as? String ?: "",
+            email = map?.get("email") as? String ?: "",
+            password = map?.get("password") as? String ?: ""
         )
 
         fun fromDomain(domain: UserModel) = UserDto(

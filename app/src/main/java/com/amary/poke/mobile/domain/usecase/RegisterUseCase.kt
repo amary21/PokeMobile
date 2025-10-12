@@ -1,24 +1,25 @@
 package com.amary.poke.mobile.domain.usecase
 
-import android.util.Log
 import com.amary.poke.mobile.domain.model.UserModel
 import com.amary.poke.mobile.domain.repository.PokeRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 
 class RegisterUseCase(
-    private val repository: PokeRepository
+    private val repository: PokeRepository,
+    private val dispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(
         username: String,
         fullName: String,
         email: String,
         password: String,
-    ): Result<String> {
+    ): Result<String> = withContext(dispatcher) {
         try {
             var checkUser = repository.isUsernameExists(username)
-            Log.e("invoke", checkUser.toString())
             if (checkUser) {
-                return Result.failure(Exception("Username already exists"))
+                Result.failure(Exception("Username already exists"))
             } else {
                 repository.insertUser(
                     user = UserModel(
@@ -30,11 +31,14 @@ class RegisterUseCase(
                 )
 
                 checkUser = repository.isUsernameExists(username)
-                if (!checkUser) return Result.failure(Exception("Registration failed"))
-                return Result.success("Registration successful")
+                if (!checkUser) {
+                    Result.failure(Exception("Registration failed"))
+                } else {
+                    Result.success("Registration successful")
+                }
             }
         } catch (e: Exception) {
-            return Result.failure(e)
+            Result.failure(e)
         }
     }
 }

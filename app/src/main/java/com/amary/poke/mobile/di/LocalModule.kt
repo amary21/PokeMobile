@@ -1,5 +1,7 @@
 package com.amary.poke.mobile.di
 
+import com.amary.poke.mobile.coroutine.Dispatcher
+import com.amary.poke.mobile.data.local.collection.DbCollection
 import com.amary.poke.mobile.data.local.source.LocalSource
 import com.amary.poke.mobile.data.local.source.LocalSourceImpl
 import com.couchbase.lite.Collection
@@ -14,16 +16,21 @@ val localModule = module {
         CouchbaseLite.init(androidContext())
         Database("poke.db")
     }
-    single<Collection>(qualifier = named("user_collection")) {
-        get<Database>().createCollection("user_collection")
+    single<Collection>(named(DbCollection.USER)) {
+        get<Database>().createCollection(DbCollection.USER.collection)
     }
-    single<Collection>(qualifier = named("auth_collection")) {
-        get<Database>().createCollection("auth_collection")
+    single<Collection>(named(DbCollection.AUTH)) {
+        get<Database>().createCollection(DbCollection.AUTH.collection)
+    }
+    single<Collection>(named(DbCollection.POKE)) {
+        get<Database>().createCollection(DbCollection.POKE.collection)
     }
     single<LocalSource> {
         LocalSourceImpl(
-            get(qualifier = named("auth_collection")),
-            get(qualifier = named("user_collection"))
+            get(named(DbCollection.AUTH)),
+            get(named(DbCollection.USER)),
+            get(named(DbCollection.POKE)),
+            get(named(Dispatcher.IO))
         )
     }
 }
