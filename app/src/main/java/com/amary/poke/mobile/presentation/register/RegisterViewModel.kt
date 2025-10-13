@@ -1,6 +1,5 @@
 package com.amary.poke.mobile.presentation.register
 
-import android.util.Patterns.EMAIL_ADDRESS
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amary.poke.mobile.domain.usecase.RegisterUseCase
@@ -47,6 +46,10 @@ class RegisterViewModel(
     }
 
     private fun isValidEmail(email: String): Boolean {
-        return EMAIL_ADDRESS.matcher(email).matches()
+        return EMAIL_PATTERN.matches(email)
+    }
+
+    private companion object {
+        val EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
     }
 }

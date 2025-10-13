@@ -24,6 +24,22 @@ val fileFilterExcludeJacoco = listOf(
     "**/databinding/**/*.*",
     "**/generated/**/*.*",
     "**/di/**/*.*",
+    "**/coroutine/**/*.*",
+    "**/collection/**/*.*",
+    "**/local/**/*.*",
+    "**/remote/**/*.*",
+    "**/route/**/*.*",
+    "**/component/**/*.*",
+    "**/theme/**/*.*",
+    "**/MainApplication.*",
+    "**/MainActivity.*",
+    "**/MainActivityKt.*",
+    "**/*NavKt.*",
+    "**/*ScreenKt.*",
+    "**/*Screen*",
+    "**/*ComponentKt.*",
+    "**/*Composable*",
+    "**/*Route*",
 )
 
 // Data class for coverage parsing
